@@ -1,5 +1,9 @@
-import { UserDto } from '../services/dto/userInput.dto';
-
-export interface IUserEntity extends UserDto {
-  id: string;
+export class User {
+  id?: string;
+  nickname: string;
+  name: string;
+  password: string;
+  image: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }

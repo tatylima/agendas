@@ -1,50 +1,114 @@
-import { IUserEntity } from '../entities/user.entity';
-import { UserDto } from './dto/userInput.dto';
-import { randomUUID } from 'node:crypto';
-import { PartialUserDto } from './dto/partialUserInput.dto';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { CreateUserDto } from '../dto/create-user.dto'; 
+import { UpdateUserDto } from '../dto/update-user.dto';
+import { User } from '../entities/user.entity';
+import * as bcrypt from 'bcrypt';
 
+@Injectable()
 export class UserService {
-  private users: IUserEntity[] = [];
+  private userSelect = {
+    id: true,
+    nickname: true,
+    name: true,
+    password: false,
+    image: true,
+    createdAt: true,
+    updatedAt: true,
+  };
 
-  async createUser(user: UserDto): Promise<IUserEntity> {
-    const userEntity = { ...user, id: randomUUID() };
-    this.users.push(userEntity);
-    return userEntity;
-  }
+  constructor(private readonly prisma: PrismaService) {}
 
-  async updateUser(userData: PartialUserDto): Promise<IUserEntity> {
-    this.users.map((user, index) => {
-      if (user.id === userData.id) {
-        const UpdatedUser = Object.assign(user, userData);
-        this.users.splice(index, 1, UpdatedUser);
-      }
+  findAll(): Promise<User[]> {
+    return this.prisma.user.findMany({
+      select: this.userSelect,
     });
-    const updatedUser = this.users.find((user) => user.id === userData.id);
-    return updatedUser;
   }
 
-  async getAllUsers(): Promise<IUserEntity[]> {
-    return this.users;
-  }
-
-  async deleteUserById(userId: string): Promise<boolean> {
-    const existUser = this.users.find((user) => user.id === userId);
-    if (!existUser) {
-      return false;
-    }
-    this.users.map((user, index) => {
-      if (user.id === userId) {
-        this.users.splice(index, 1);
-      }
+  async findById(id: string): Promise<User> {
+    const record = await this.prisma.user.findUnique({
+      where: { id },
+      select: this.userSelect,
     });
-    return true;
+
+    if (!record) {
+      throw new NotFoundException(`Registro com o ID '${id}' não encontrado.`);
+    }
+
+    return record;
   }
 
-  async getUserById(userId: string): Promise<IUserEntity> {
-    const existUser = this.users.find((user) => user.id === userId);
-    if (!existUser) {
-      throw new Error('User not found');
+  async findOne(id: string): Promise<User> {
+    return this.findById(id);
+  }
+
+  async create(dto: CreateUserDto): Promise<User> {
+    if (dto.password != dto.confirmPassword) {
+      throw new BadRequestException('As senhas informadas não são iguais.');
     }
-    return existUser;
+
+    delete dto.confirmPassword;
+
+    const data: User = {
+      ...dto,
+      password: await bcrypt.hash(dto.password, 10),
+    };
+
+    return this.prisma.user
+      .create({
+        data,
+        select: this.userSelect,
+      })
+      .catch(this.handleError);
+  }
+
+  async update(id: string, dto: UpdateUserDto): Promise<User> {
+    await this.findById(id);
+
+    if (dto.password) {
+      if (dto.password != dto.confirmPassword) {
+        throw new BadRequestException('As senhas informadas não são iguais.');
+      }
+    }
+
+    delete dto.confirmPassword;
+
+    const data: Partial<User> = { ...dto };
+
+    if (data.password) {
+      data.password = await bcrypt.hash(data.password, 10);
+    }
+
+    return this.prisma.user
+      .update({
+        where: { id },
+        data,
+        select: this.userSelect,
+      })
+      .catch(this.handleError);
+  }
+
+  async delete(id: string) {
+    await this.findById(id);
+
+    await this.prisma.user.delete({ where: { id } });
+  }
+
+  handleError(error: Error): undefined {
+    const errorLines = error.message?.split('\n');
+    const lastErrorLine = errorLines[errorLines.length - 1]?.trim();
+
+    if (!lastErrorLine) {
+      console.error(error);
+    }
+
+    throw new UnprocessableEntityException(
+      lastErrorLine || 'Algum erro ocorreu ao executar a operação',
+    );
   }
 }

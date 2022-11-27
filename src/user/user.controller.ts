@@ -1,73 +1,62 @@
 import {
-  Body,
   Controller,
-  Delete,
   Get,
-  Param,
-  Patch,
   Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
-import e from 'express';
-import { IUserEntity } from './entities/user.entity';
-import { PartialUserDto } from './services/dto/partialUserInput.dto';
-import { UserDto } from './services/dto/userInput.dto';
-import { UserService } from './services/user.service';
+import { UserService } from './services/user.service'; 
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
-@Controller()
+@ApiTags('user')
+@Controller('user')
 export class UserController {
-  constructor(private readonly service: UserService) {}
+  constructor(private readonly userService: UserService) {}
+
+  @Post()
+  @ApiOperation({
+    summary: 'Criar um usuário',
+  })
+  create(@Body() createUserDto: CreateUserDto) {
+    return this.userService.create(createUserDto);
+  }
 
   @Get()
-  async getAllUser(): Promise<IUserEntity[]> {
-    return await this.service.getAllUsers();
+  @ApiOperation({
+    summary: 'Listar todos os usuários',
+  })
+  findAll() {
+    return this.userService.findAll();
   }
 
   @Get(':id')
-  async getUserById(@Param('id') userId: string): Promise<IUserEntity> {
-    try {
-      return await this.service.getUserById(userId);
-    } catch (err) {
-      console.log(err);
-    }
+  @ApiOperation({
+    summary: 'Visualizar um usuário pelo ID',
+  })
+  findOne(@Param('id') id: string) {
+    return this.userService.findOne(id);
   }
 
-  @Post()
-  async createUser(
-    @Body() { cpf, email, password, name, role }: UserDto,
-  ): Promise<IUserEntity> {
-    try {
-      return await this.service.createUser({
-        cpf,
-        email,
-        password,
-        name,
-        role,
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
-  @Patch()
-  async updateUser(@Body() userData: PartialUserDto): Promise<IUserEntity> {
-    try {
-      return await this.service.updateUser(userData);
-    } catch (err) {
-      console.log(err);
-    }
+  @Patch(':id')
+  @ApiOperation({
+    summary: 'Editar um usuário pelo ID',
+  })
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.userService.update(id, updateUserDto);
   }
 
   @Delete(':id')
-  async deleteUserById(@Param('id') userId: string): Promise<string> {
-    try {
-      const userIsDeleted = await this.service.deleteUserById(userId);
-      if (userIsDeleted) {
-        return 'User deleted successfully';
-      } else {
-        return 'User not found';
-      }
-    } catch (err) {
-      console.log(err);
-    }
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({
+    summary: 'Remover um usuário pelo ID',
+  })
+  delete(@Param('id') id: string) {
+    this.userService.delete(id);
   }
 }
