@@ -1,9 +1,11 @@
-import { Module } from "@nestjs/common";
-import { ProductsController } from "./products.controller";
-import { ProductsService } from "./products.services";
+import { Module } from '@nestjs/common';
+import { ProductService } from './products.services';
+import { ProductController } from './products.controller';
+import { PrismaModule } from 'src/prisma/prisma.module'; // < NOVO IMPORT
 
 @Module({
-  controllers: [ProductsController],
-  providers: [ProductsService]
+  imports: [PrismaModule], 
+  controllers: [ProductController],
+  providers: [ProductService],
 })
-export class ProductsModule {}
+export class ProductModule {}

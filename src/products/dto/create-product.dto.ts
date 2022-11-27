@@ -1,45 +1,35 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsString, IsUrl, IsUUID } from 'class-validator';
+import { IsNumber, IsString, IsUrl } from 'class-validator';
 
 export class CreateProductDto {
-  @ApiProperty({
-    description: 'nome do produto',
-    example: ' Ano Novo 2023',
-  })
   @IsString()
-  @IsNotEmpty()
+  @ApiProperty({
+    description: 'Nome do produto',
+    example: 'Ano Novo',
+  })
   name: string;
 
-  @ApiProperty({
-    description: 'descrição do produto',
-    example:
-      'Agenda de 2023',
-  })
   @IsString()
-  @IsNotEmpty()
+  @ApiProperty({
+    description: 'Descrição do produto',
+    example:
+      'Produto para anotação',
+  })
   description: string;
 
-  @ApiProperty({
-    description: 'preço do produto',
-    example: 25.45,
-  })
   @IsNumber({
     maxDecimalPlaces: 2,
   })
+  @ApiProperty({
+    description: 'Preço do produto',
+    example: 22.34,
+  })
   price: number;
 
-  @ApiProperty({
-    description: 'imagem do produto',
-    example:
-      ' https:',
-  })
   @IsUrl()
-  image: string;
-
   @ApiProperty({
-    description: 'foreign key, get from category',
-    example: 'd298b53a-e44e-4eda-a248-66dd0f361e4d',
+    description: 'Imagem do produto',
+    example: '',
   })
-  @IsUUID()
-  categoryId: string;
+  image: string;
 }
