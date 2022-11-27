@@ -1,30 +1,25 @@
-import { ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
-import { NestExpressApplication } from '@nestjs/platform-express';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { AppModule } from './app.module';
+import { ValidationPipe } from "@nestjs/common";
+import { NestFactory } from "@nestjs/core";
+import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { AppModule } from "./app.module";
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    cors: true,
-  });
-
-  app.set('trust proxy', 1);
+  const app = await NestFactory.create(AppModule);
 
   app.useGlobalPipes(new ValidationPipe());
 
   const config = new DocumentBuilder()
     .setTitle('Agendas')
-    .setDescription('API Agendas')
-    .setVersion('1.0')
-    .addTag('status')
-    .addTag('users')
-    .addTag('products')
+    .setDescription('Api Agendas')
+    .setVersion('1.0.0')
+    .addTag('status')   // < A ORDEM PODE SER ALTERADA
+    .addTag('user')    // < A ORDEM PODE SER ALTERADA
+    .addTag('product')  // < A ORDEM PODE SER ALTERADA
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('docs', app, document);
+  SwaggerModule.setup('api', app, document);
 
-  await app.listen(process.env.PORT || 3333);
+  await app.listen(3333);
 }
 bootstrap();
