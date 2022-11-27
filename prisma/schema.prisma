@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String @id @default(uuid())
+  nickname String @unique
+  name     String
+  password String
+  image    String
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  orders Order[]
+
+  @@map("user")
+}
+
+model Product {         // NOVO MODEL
+  id          String @id @default(uuid())
+  name        String @unique
+  description String
+  price       Float
+  image       String
+                        // NOVOS DECORATORS ABAIXO:
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  orders Order[]
+  @@map("product")
+}
+model Order {
+  id String @id @default(uuid())
+  
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @map("user_id")
+  
+ 
+  products Product[]
+  
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  @@map("order")
+}
