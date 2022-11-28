@@ -29,7 +29,7 @@ export class CreateProductDto {
   @IsUrl()
   @ApiProperty({
     description: 'Imagem do produto',
-    example: '',
+    example: 'https://http2.mlstatic.com/D_NQ_NP_878715-MLB50163998856_062022-O.webp',
   })
   image: string;
 }
