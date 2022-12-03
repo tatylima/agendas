@@ -5,6 +5,7 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { handleError } from 'src/utils/handle-error.util';
 import { CreateUserDto } from '../dto/create-user.dto'; 
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { User } from '../entities/user.entity';
