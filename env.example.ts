@@ -1,1 +1,1 @@
-DATABASE_URL="postgresql://postgres:admin@localhost:5432/agendas"
+const DATABASE_URL="postgresql://postgres:admin@localhost:5432/agendas"
