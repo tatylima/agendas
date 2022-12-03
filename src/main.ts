@@ -12,10 +12,12 @@ async function bootstrap() {
     .setTitle('Agendas')
     .setDescription('Api Agendas')
     .setVersion('1.0.0')
-    .addTag('status')   // < A ORDEM PODE SER ALTERADA
-    .addTag('user')    // < A ORDEM PODE SER ALTERADA
-    .addTag('product')  // < A ORDEM PODE SER ALTERADA
+    .addTag('status') 
+    .addTag('auth')  
+    .addTag('user')    
+    .addTag('product') 
     .addTag('order')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
