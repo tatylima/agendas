@@ -34,4 +34,12 @@ export class CreatUserDto {
     message: 'weak password',
   })
   password: string;
+
+@ApiProperty()
+@IsString()
+cpf: string;
+
+@ApiProperty()
+@IsString()
+role: string;
 }
