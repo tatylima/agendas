@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
   UseGuards,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { ProductsService } from './products.services'; 
 import { CreateProductDto } from './dto/create-product.dto';
@@ -60,8 +62,10 @@ export class ProductsController {
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'delete a product' })
-  remove(@Param('id') id: string) {
+ 
+ delete(@Param('id') id: string) {
     return this.productsService.remove(id);
   }
 

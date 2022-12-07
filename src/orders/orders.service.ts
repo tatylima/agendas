@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateOrderDto } from './dto/create-order.dto';
+import { handleErrorUnique } from 'src/utils/handle.error.unique';
 
 @Injectable()
 export class OrdersService {
@@ -49,7 +50,8 @@ export class OrdersService {
     return this.prisma.order.create({
       data,
       select: this.selectingInformation,
-    });
+    })
+    .catch(handleErrorUnique);
   }
 
   findAll() {
@@ -62,3 +64,4 @@ export class OrdersService {
       select: this.selectingInformation,
     });
   }
+}

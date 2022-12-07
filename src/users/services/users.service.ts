@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreatUserDto } from './dto/create-user.dto';
+import { CreatUserDto } from '../dto/create-user.dto'; 
 import { PrismaService } from 'src/prisma/prisma.service';
-import * as bcrypt from 'bcryptjs';
+import * as bcrypt from 'bcrypt';
 import { UpdateUserDto } from '../dto/update-user.dto'; 
 import { handleErrorUnique } from 'src/utils/handle.error.unique';
 import { User } from '../entities/user.entity'; 
@@ -79,7 +79,7 @@ export class UsersService {
       .catch(handleErrorUnique);
   }
 
-  async remove(id: string) {
+  async delete(id: string) {
     await this.verifyIdandReturnUser(id);
 
     return this.prisma.user.delete({

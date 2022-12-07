@@ -36,7 +36,7 @@ export class CreateProductDto {
   })
   @IsUrl()
   image: string;
-}
+
 @ApiProperty({
   description: 'foreign key, get from category',
   example: 'd298b53a-e44e-4eda-a248-66dd0f361e4d',

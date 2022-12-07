@@ -4,21 +4,22 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { LoggedUser } from 'src/auth/logged-user.decorator';
 import { User } from 'src/users/entities/user.entity'; 
 import { CreateOrderDto } from './dto/create-order.dto';
-import { OrderService } from './orders.service'; 
+import { OrdersService } from './orders.service'; 
 
 @ApiTags('orders')
 @UseGuards(AuthGuard())
 @ApiBearerAuth()
 @Controller('orders')
+
 export class OrdersController {
-  constructor(private readonly ordersService: OrderService) {}
+  constructor(private readonly ordersService: OrdersService) {}
 
   @Post()
   @ApiOperation({
     summary: 'Criar um pedido',
   })
   create(@LoggedUser() user: User, @Body() createOrderDto: CreateOrderDto) {
-    return this.ordersService.create(user.id, createOrderDto);
+    return this.ordersService.create( createOrderDto);
   }
 
   @Get()
