@@ -1,8 +1,19 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
+import { User } from 'src/users/entities/user.entity';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginResponseDto } from './dto/login-response.dto';
 import { LoginDto } from './dto/login.dto';
+import { LoggedUser } from './logged-user.decorator';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -17,4 +28,14 @@ export class AuthController {
   login(@Body() loginDto: LoginDto): Promise<LoginResponseDto> {
     return this.authService.login(loginDto);
   }
-}
+
+  @Get()
+  @UseGuards(AuthGuard())
+  @ApiOperation({
+    summary: 'Retorna o usuário autenticado no momento',
+  })
+  @ApiBearerAuth()
+    profile(@LoggedUser() user: User) {
+      return user;
+    }
+  }
