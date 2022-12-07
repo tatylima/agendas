@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
-import { ProductService } from './products.services';
-import { ProductController } from './products.controller';
-import { PrismaModule } from 'src/prisma/prisma.module'; // < NOVO IMPORT
+import { ProductsService } from './products.services';
+import { ProductsController } from './products.controller';
+import { PrismaModule } from 'src/prisma/prisma.module';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
-  imports: [PrismaModule], 
-  controllers: [ProductController],
-  providers: [ProductService],
+  imports: [PrismaModule, PassportModule.register({ defaultStrategy: 'jwt' })],
+  controllers: [ProductsController],
+  providers: [ProductsService],
 })
-export class ProductModule {}
+export class ProductsModule {}
