@@ -11,18 +11,31 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  name      String
-  email     String   @unique
-  password  String
+  id       String  @id @default(uuid())
+  name     String
+  cpf      String  @unique
+  email    String  @unique
+  password String
+  image    String
+  isAdmin  Boolean @default(false) @map("is_admin")
+  profile Profile[]
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
-
-  favorites Favorite[]
-
   orders Order[]
-
   @@map("user")
+}
+
+model Profile {
+  id    String @id @default(uuid())
+  name  String
+  image String
+
+  favorite Favorite?
+  products Product[]
+  user     User       @relation(fields: [userId], references: [id])
+  userId   String     @map("user_id")
+ 
+  @@map("profile")
 }
 
 model Product {
@@ -38,7 +51,7 @@ model Product {
   categoryId String?   @map("category_id")
 
   favorites Favorite[]
-
+  profile Profile[]
   orders OrderToProduct[]
 
   @@map("product")
@@ -51,23 +64,16 @@ model Category {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   products Product[]
-
+  
   @@map("category")
 }
 
 model Favorite {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now()) @map("created_at")
-
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String @map("user_id")
-
-
-  product     Product @relation(fields: [productName], references: [name], onDelete: Cascade)
-  productName String  @map("product_name")
-
-  @@unique([userId, productName])
-  @@map("favorite")
+ id String @id @default(uuid())
+  profile   Profile @relation(fields: [profileId], references: [id])
+  profileId String  @map("profile_id") @unique
+  products Product[]
+  
 }
 
 model Order {
