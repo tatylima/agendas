@@ -6,6 +6,8 @@ import { ProductsModule } from './products/products.module';
 import { CategoryModule } from './category/category.module';
 import { OrderModule } from './orders/orders.module';
 import { AuthModule } from './auth/auth.module';
+import { ProfilesModule } from './profiles/profiles.module';
+import { HomepageModule } from './homepage/homepage.module';
 
 @Module({
   imports: [
@@ -14,6 +16,8 @@ import { AuthModule } from './auth/auth.module';
     CategoryModule,
     OrderModule,
     AuthModule,
+    ProfilesModule,
+    HomepageModule,
   ],
   controllers: [AppController],
   providers: [AppService],
