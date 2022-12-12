@@ -1,11 +1,11 @@
-import { Favorites } from "src/favorites/dto/entities/favorite-entity"; 
-
 export class User {
-  id: string;
+  id?: string;
+  isAdmin?: boolean;
   name: string;
+  cpf: string;
   email: string;
-  password?: string;
-  createdAt: Date;
-  updatedAt: Date;
-  favorites?: Favorites[];
+  password: string;
+  image: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
