@@ -10,6 +10,42 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Products {
+  id                 String @id @default(uuid())
+  title              String
+  description        String
+  price              Float
+  year               Int
+  image              String
+  
+  category Category[]
+  profile  Profile[]
+  favProducts FavProducts[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  @@map("products")
+}
+
+model Category {
+  id    String @id @default(uuid())
+  category String @unique
+  products Products[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  @@map("category")
+}
+
+model Profile {
+  id    String @id @default(uuid())
+  name  String
+  image String
+  favproducts FavProducts?
+  products     Products[]
+  user     User       @relation(fields: [userId], references: [id])
+  userId   String     @map("user_id")
+  @@map("profile")
+}
+
 model User {
   id       String  @id @default(uuid())
   name     String
@@ -21,84 +57,13 @@ model User {
   profile Profile[]
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
-  orders Order[]
   @@map("user")
 }
 
-model Profile {
-  id    String @id @default(uuid())
-  name  String
-  image String
-
-  favorite Favorite?
-  products Product[]
-  user     User       @relation(fields: [userId], references: [id])
-  userId   String     @map("user_id")
- 
-  @@map("profile")
-}
-
-model Product {
-  id          String   @id @default(uuid())
-  name        String   @unique
-  description String
-  price       Float
-  image       String
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
-
-  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
-  categoryId String?   @map("category_id")
-
-  favorites Favorite[]
-  profile Profile[]
-  orders OrderToProduct[]
-
-  @@map("product")
-}
-
-model Category {
-  id        String   @id @default(uuid())
-  name      String   @unique
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  products Product[]
-  
-  @@map("category")
-}
-
-model Favorite {
- id String @id @default(uuid())
+model FavProducts {
+  id String @id @default(uuid())
   profile   Profile @relation(fields: [profileId], references: [id])
   profileId String  @map("profile_id") @unique
-  products Product[]
+  products Products[]
   
-}
-
-model Order {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now()) @map("created_at")
-
-  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
-  userId String? @map("user_id")
-
-  products OrderToProduct[]
-
-  @@map("order")
-}
-
-model OrderToProduct {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now()) @map("created_at")
-
-  product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
-  productId String?  @map("product_id")
-
-  order   Order?  @relation(fields: [orderId], references: [id], onDelete: SetNull)
-  orderId String? @map("order_id")
-
-  quantity Int
-
-  @@map("order_to_product")
 }

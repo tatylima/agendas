@@ -3,7 +3,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class HomepageService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async findAll(id: string) {
     const profileData = await this.prisma.profile.findUnique({
@@ -25,7 +25,7 @@ export class HomepageService {
             image: true,
             category: {
               select: {
-            category: true,
+                category: true,
               },
             },
           },
